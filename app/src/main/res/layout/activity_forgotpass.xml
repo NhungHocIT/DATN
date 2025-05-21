@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/forgotpass"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    tools:context=".Forgotpass">
+
+    <TextView
+        android:id="@+id/txtforgotpass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quên mật khẩu"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:layout_marginTop="50dp"/>
+
+    <TextView
+        android:id="@+id/note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bạn vui lòng cung cấp số điện thoại hoặc email đã đăng ký để lấy lại mật khẩu"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintTop_toBottomOf="@id/txtforgotpass"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp"/>
+
+    <!-- Nhãn Email/SĐT -->
+    <TextView
+        android:id="@+id/MailForgot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email/SĐT"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/note"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="40dp"/>
+
+    <!-- Input Email/SĐT -->
+    <EditText
+        android:id="@+id/edtmailforget"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:hint="Email hoặc Số điện thoại"
+        android:inputType="textEmailAddress"
+        android:background="@android:drawable/editbox_background"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/MailForgot"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+    <!--button-->
+    <Button
+        android:id="@+id/btnxacnhan"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Đổi mật khẩu"
+        android:textSize="20sp"
+        android:textColor="@color/White"
+        android:backgroundTint="@color/blue"
+        app:layout_constraintTop_toBottomOf="@id/edtmailforget"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

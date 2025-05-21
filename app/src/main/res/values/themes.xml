@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.DACN" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- mau nen chinh -->
+        <item name="colorPrimary">@color/My_primary</item>
+        <item name="colorPrimaryVariant">@color/My_primary</item>
+        <item name="colorOnPrimary">@color/White</item>
+        <!-- mau nen phu-->
+        <item name="colorSecondary">@color/My_secondary</item>
+        <item name="colorSecondaryVariant">@color/My_secondary</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color-->
+        <item name="android:statusBarColor">@color/White</item>
+    </style>
+
+    <style name="Theme.DACN" parent="Base.Theme.DACN" />
+<style name="DialogAnimation">
+    <item name="android:windowEnterAnimation">@anim/slide_in</item>
+    <item name="android:windowExitAnimation">@anim/slide_out</item>
+
+</style>
+</resources>

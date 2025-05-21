@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Goal Manager</string>
+    <string name="back">Quay lại</string>
+    <string name="settings">Cài đặt</string>
+    <string name="user_name">Nhunn</string>
+    <string name="description">Lười biếng thì không có thành công.</string>
+    <string name="no_achievement">Bạn chưa có thành tựu nổi bật nào.</string>
+    <string name="what_are_you_thinking">Bạn đang nghĩ gì?</string>
+    <string name="post">Đăng bài</string>
+    <string name="avatar">Ảnh đại diện</string>
+</resources>
