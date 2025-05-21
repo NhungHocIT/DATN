@@ -2,10 +2,10 @@ package com.example.GoalMaster;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,64 +20,69 @@ import java.util.Calendar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import com.example.GoalMaster.User;
-import com.example.GoalMaster.database.UserDatabaseHelper;
+
+
 
 public class Register extends AppCompatActivity {
 
-    EditText edtUsername, edtEmailPhone, edtPassword, edtBirth; // ✅ thêm edtBirth
-    Button btnRegister;
-    ApiService apiService;
-    TextView tvSignUp;
+    // 🔸 Khai báo biến giao diện (UI fields)
+    private EditText edtUsername, edtEmailPhone, edtPassword, edtRepass, edtBirth;
+    private Button btnRegister;
+    private TextView tvSignUp;
+
+    // 🔸 Khai báo biến Retrofit toàn cục (Global retrofit field)
+    private ApiService apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register); // XML layout đăng ký
-        // Ánh xạ view
+        setContentView(R.layout.activity_register);
+
+        // Ánh xạ view từ layout
         edtUsername = findViewById(R.id.edtName);
         edtEmailPhone = findViewById(R.id.edtEmailPhone);
         edtPassword = findViewById(R.id.edtpass);
+        edtRepass = findViewById(R.id.edtRepass);
         btnRegister = findViewById(R.id.btnregister);
         tvSignUp = findViewById(R.id.tvSignUp);
         edtBirth = findViewById(R.id.edtBirth);
 
-        edtBirth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
+        // 🔹 Khởi tạo Retrofit client
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(Register.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
-                                String birthDate = String.format("%02d-%02d-%04d", selectedDay, selectedMonth + 1, selectedYear);
-                                edtBirth.setText(birthDate);
-                            }
-                        }, year, month, day);
-                datePickerDialog.show();
-            }
+
+        // 👉 Chọn ngày sinh
+        edtBirth.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(Register.this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        // Định dạng yyyy-MM-dd
+                        String birthDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                        edtBirth.setText(birthDate);
+                    }, year, month, day);
+            datePickerDialog.show();
         });
 
-        tvSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Register.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
+
+        // 👉 Chuyển về trang đăng nhập
+        tvSignUp.setOnClickListener(view -> {
+            startActivity(new Intent(Register.this, LoginActivity.class));
+            finish();
         });
 
-        apiService = ApiClient.getRetrofit().create(ApiService.class);
+        // 👉 Xử lý nút Đăng ký
         btnRegister.setOnClickListener(v -> {
             String username = edtUsername.getText().toString().trim();
             String emailPhone = edtEmailPhone.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
+            String confirmPassword = edtRepass.getText().toString().trim();
+            String birth = edtBirth.getText().toString().trim();
 
-            // Kiểm tra đầu vào (Input validation)
-            if (username.isEmpty() || emailPhone.isEmpty() || password.isEmpty()) {
+            // Kiểm tra đầu vào
+            if (username.isEmpty() || emailPhone.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || birth.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -87,20 +92,40 @@ public class Register extends AppCompatActivity {
                 return;
             }
 
+
             RegisterRequest request = new RegisterRequest(emailPhone, password, username);
             // Gọi API đăng ký
             Call<RegisterResponse> call = apiService.registerUser(request);
+            // Gửi yêu cầu đăng ký
+            RegisterRequest request = new RegisterRequest(emailPhone, password,confirmPassword, username, birth);
+            ApiService apiService = ApiClient.getRetrofit().create(ApiService.class);
+            Call<RegisterResponse> call = apiService.registerUser(request);
+
             call.enqueue(new Callback<RegisterResponse>() {
                 @Override
                 public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         RegisterResponse registerResponse = response.body();
+
                         if (registerResponse.isStatus()) {
                             Toast.makeText(Register.this, registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
 
                             // Chuyển về màn hình đăng nhập
                             Intent intent = new Intent(Register.this, LoginActivity.class);
-                            startActivity(intent);
+
+
+                        if (registerResponse.isStatus()) {
+                            // ✅ Lưu thông tin vào SharedPreferences
+                            SharedPreferences sharedPref = getSharedPreferences("user_data", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("username", username);
+                            editor.putString("emailPhone", emailPhone);
+                            editor.putString("birth", birth);
+                            editor.apply();
+
+                            Toast.makeText(Register.this, registerResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(Register.this, LoginActivity.class));
+
                             finish();
                         } else {
                             Toast.makeText(Register.this, "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
@@ -109,6 +134,7 @@ public class Register extends AppCompatActivity {
                         Toast.makeText(Register.this, "Lỗi khi đăng ký: " + response.message(), Toast.LENGTH_SHORT).show();
                     }
                 }
+
                 @Override
                 public void onFailure(Call<RegisterResponse> call, Throwable t) {
                     Toast.makeText(Register.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -116,4 +142,5 @@ public class Register extends AppCompatActivity {
             });
         });
     }
-}
+    }
+

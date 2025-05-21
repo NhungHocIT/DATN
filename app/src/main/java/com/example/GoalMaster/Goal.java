@@ -34,9 +34,12 @@ public class Goal extends AppCompatActivity {
         ImageButton btnAddGoal = findViewById(R.id.btnAddGoal);
 
         // Xử lý sự kiện khi nhấn nút Back
-        btnBack.setOnClickListener(v -> finish());
-
-        // Xử lý khi nhấn vào các nút chuyển màn hình
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(Goal.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish(); // Đóng Goal Activity hiện tại
+        });
         btnOngoingGoals.setOnClickListener(v -> {
             Intent intent = new Intent(Goal.this, Doinggoal.class);
             startActivity(intent);
